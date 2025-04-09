@@ -2,10 +2,10 @@ from config.db_config import Base
 from sqlalchemy import Column, Integer, String, DateTime, Text
 from sqlalchemy.orm import relationship
 from datetime import datetime, timezone
-from models import thread_asistente
+from models.thread_asistente import thread_asistente
 
 class Asistente(Base):
-    __tablename__ = "asistentes"
+    __tablename__ = "asistente"
 
     asistente_id = Column(Integer, primary_key=True, index=True)
     name = Column(String(100), nullable=False)

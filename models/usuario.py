@@ -3,7 +3,7 @@ from config.db_config import Base
 from datetime import datetime, timezone
 
 class Usuario(Base):
-    __tablename__ = "usuarios"
+    __tablename__ = "usuario"
 
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String(255), nullable=False, unique=True)

@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from models.profesor import Profesor
 from repositories.usuario_repository import UsuarioRepository
 
-class ProfesorRepository(UsuarioRepository):
+class ProfesorRepository:
     def __init__(self, db: Session):
         self.db = db
         

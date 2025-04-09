@@ -14,8 +14,12 @@ class AuthService:
         self.db = db
         self.alumno_repo = AlumnoRepository(db)
 
-    async def registrar_alumnos(self, email: str, contrasena: str, dni: str) -> dict:
+    async def registrar_alumnos(self, register_data: dict) -> dict:
+
         endpoint_verificacion = "http://dashboard.fce.uncu.edu.ar:5000/alutivos/verificaralumnotutor"
+
+        dni = register_data.get("dni")
+
         payload = {"documento": dni}
         
         async with httpx.AsyncClient() as client:
@@ -25,7 +29,7 @@ class AuthService:
                 headers={"Content-Type": "application/json"}
             )
         
-        if response.status_code != 200:
+        if response.status_code != 201:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Error al verificar DNI"
@@ -39,14 +43,14 @@ class AuthService:
             )
         
         alumno_info = data[0]
-        if alumno_info.get("claustro") != "EST" or alumno_info.get("calidad") != "A":
+        if alumno_info.get("claustro") != "EST" or alumno_info.get("calidad") != "A" or alumno_info.get("legajo") is not None:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="El alumno no cumple con los criterios de verificación"
             )
         
         try:
-            firebase_user = await asyncio.to_thread(auth.create_user, email=email, password=contrasena)
+            firebase_user = await asyncio.to_thread(auth.create_user, email=register_data.get("email"), password=register_data.get("password"))
             firebase_uid = firebase_user.uid
         except Exception as e:
             raise HTTPException(
@@ -55,23 +59,24 @@ class AuthService:
             )
         
         try:
-            existing_user = self.alumno_repo.get_by_email(email)
+
+            existing_user = self.alumno_repo.get_by_email(alumno_info.get("email"))
             if existing_user:
                 raise HTTPException(
                     status_code=status.HTTP_409_CONFLICT,
                     detail="El usuario ya está registrado"
                 )
-            nuevo_alumno = Alumno(
-                email=email,
-                contrasena=contrasena,
-                firebase_uid=firebase_uid
-            )
-
-            nuevo_alumno.nombres = alumno_info.get("nombres")
-            nuevo_alumno.apellido = alumno_info.get("apellido")
-            nuevo_alumno.nro_documento = alumno_info.get("nro_documento")
             
-            self.alumno_repo.create(nuevo_alumno)
+            alumno = {
+            "nombres": register_data.get("nombres"),
+            "apellido": register_data.get("apellido"),
+            "email": register_data.get("email"),
+            "nro_documento": register_data.get("dni"),
+            "contrasena": register_data.get("password"),
+            "firebase_uid": firebase_uid
+            }
+
+            self.alumno_repo.create(alumno)
             self.db.commit()
         except Exception as e:
             raise HTTPException(
@@ -82,5 +87,5 @@ class AuthService:
         return {
             "message": "Usuario registrado exitosamente",
             "firebase_uid": firebase_uid,
-            "email": email
+            "email": alumno.get("email")
         }

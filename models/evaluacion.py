@@ -4,18 +4,15 @@ from sqlalchemy.orm import relationship
 from datetime import datetime, timezone
 
 class Evaluacion(Base):
-    __tablename__ = "evaluaciones"
+    __tablename__ = "evaluacion"
 
     evaluacion_id = Column(Integer, primary_key=True, index=True)
     nota = Column(Float, nullable=False)
     evaluacion_fecha = Column(DateTime(timezone=True), default=datetime.now(timezone.utc))
 
     # Claves foráneas: Subtema y Alumno
-    subtema_id = Column(Integer, ForeignKey("subtemas.subtema_id"), nullable=False)
-    id = Column(Integer, ForeignKey("alumnos.id"), nullable=False)
-
-    subtema = relationship("Subtema", back_populates="evaluaciones")
-    alumno = relationship("Alumno", back_populates="evaluaciones")
+    subtema_id = Column(Integer, ForeignKey("subtema.subtema_id"), nullable=False)
+    alumno_id = Column(Integer, ForeignKey("alumno.alumno_id"), nullable=False)
 
     def __repr__(self):
         return f"<Evaluacion(evaluacion_id={self.evaluacion_id}, nota={self.nota})>"

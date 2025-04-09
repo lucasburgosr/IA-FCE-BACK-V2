@@ -4,6 +4,6 @@ from config.db_config import Base
 alumno_asistente = Table(
     'alumno_asistente',
     Base.metadata,
-    Column('id', Integer, ForeignKey('alumnos.id'), primary_key=True),
-    Column('asistente_id', Integer, ForeignKey('asistentes.asistente_id'), primary_key=True)
+    Column('id', Integer, ForeignKey('alumno.alumno_id'), primary_key=True),
+    Column('asistente_id', Integer, ForeignKey('asistente.asistente_id'), primary_key=True)
 )

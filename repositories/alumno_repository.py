@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from models.alumno import Alumno
 from repositories.usuario_repository import UsuarioRepository
 
-class AlumnoRepository(UsuarioRepository):
+class AlumnoRepository:
     def __init__(self, db: Session):
         self.db = db
 
@@ -11,6 +11,9 @@ class AlumnoRepository(UsuarioRepository):
 
     def get_all(self) -> list[Alumno]:
         return self.db.query(Alumno).all()
+    
+    def get_by_email(self, email: str) -> Alumno:
+        return self.db.query(Alumno).filter(Alumno.email == email).first()
 
     def create(self, alumno_data: dict) -> Alumno:
         nuevo_alumno = Alumno(**alumno_data)
