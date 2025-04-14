@@ -7,8 +7,8 @@ from models.thread_asistente import thread_asistente
 class Asistente(Base):
     __tablename__ = "asistente"
 
-    asistente_id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(100), nullable=False)
+    asistente_id = Column(String(100), primary_key=True, index=True)
+    nombre = Column(String(100), nullable=False)
     instructions = Column(Text, nullable = False)
     created_at = Column(DateTime(timezone=True), default=datetime.now(timezone.utc))
     updated_at = Column(DateTime(timezone=True), default=datetime.now(timezone.utc))

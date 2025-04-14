@@ -53,12 +53,12 @@ class ThreadService:
         mensajes.sort(key=lambda x: x.fecha)
         return mensajes
 
-    async def send_message(self, thread_id: str, texto: str, rol: str, asistente_id: str) -> Dict[str, Any]:
+    async def send_message(self, thread_id: str, texto: str, asistente_id: str) -> Dict[str, Any]:
         try:
             mensaje = await asyncio(client.beta.threads.messages.create,
                                     thread_id=thread_id,
                                     content=texto,
-                                    role=rol)
+                                    role="user")
             # Para acceder al mensaje generado por el Asistente hay que traer de nuevo la lista
             # de mensajes
             run = await asyncio(client.beta.threads.runs.create_and_poll,

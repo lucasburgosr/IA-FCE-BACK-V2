@@ -7,7 +7,7 @@ from models.thread_asistente import thread_asistente
 class Thread(Base):
     __tablename__ = "thread"
 
-    thread_id = Column(Integer, primary_key=True, index=True)
+    thread_id = Column(String(100), primary_key=True, index=True)
     title = Column(String(255), nullable=True)
     started_at = Column(DateTime(timezone=True), default=datetime.now(timezone.utc))
     updated_at = Column(DateTime(timezone=True), default=datetime.now(timezone.utc))

@@ -61,6 +61,7 @@ def delete_thread(thread_id: str, db: Session = Depends(get_db),
         raise HTTPException(status_code=404, detail=str(e))
     return
 
+
 @router.get("/{thread_id}/messages", response_model=List[MensajeOut])
 async def read_thread_messages(thread_id: str, db: Session = Depends(get_db)):
     service = ThreadService(db)
@@ -70,12 +71,13 @@ async def read_thread_messages(thread_id: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail=str(e))
     return mensajes
 
+
 @router.post("/{thread_id}", response_model=List[MensajeOut])
-async def send_message(texto: str, rol: str, thread_id: str, db: Session = Depends(get_db)):
+async def send_message(texto: str, thread_id: str, asistente_id: str, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     try:
         service = ThreadService(db)
-        response = service.send_message()
-        
+        response = service.send_message(thread_id=thread_id, texto=texto, asistente_id=asistente_id)
+
         if response == "completed":
             return await service.get_messages(thread_id=thread_id)
 

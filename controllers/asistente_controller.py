@@ -12,8 +12,7 @@ router = APIRouter(
 )
 
 @router.get("/", response_model=List[AsistenteOut])
-def read_asistentes(db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user)):
+def read_asistentes(db: Session = Depends(get_db)):
     service = AsistenteService(db)
     return service.get_all_asistentes()
 
