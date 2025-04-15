@@ -2,6 +2,7 @@ from pydantic import BaseModel, EmailStr
 from datetime import datetime
 from typing import Optional, List
 
+from schemas.asistente_schema import AsistenteOut
 from schemas.evaluacion_schema import EvaluacionOut
 from schemas.pregunta_schema import PreguntaOut
 from schemas.thread_schema import ThreadOut
@@ -23,6 +24,7 @@ class AlumnoUpdate(BaseModel):
 class AlumnoOut(AlumnoBase):
     id: int
     last_login: datetime
+    asistentes: List[AsistenteOut] = []
     preguntas: List[PreguntaOut] = []
     evaluaciones: List[EvaluacionOut] = []
     threads: List[ThreadOut] = []

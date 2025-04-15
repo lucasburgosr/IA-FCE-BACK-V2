@@ -22,14 +22,23 @@ class ThreadService:
         if not thread:
             raise ValueError(f"Thread con id {thread_id} no encontrado")
         return thread
+    
+    def get_thread_by_alumno(self, alumno_id: int) -> Thread:
+        thread = self.thread_repo.get_by_alumno(alumno_id=alumno_id)
+
+        if not thread:
+            return self.create_thread(alumno_id=alumno_id)
+        
+        return thread
 
     def get_all_threads(self) -> List[Thread]:
         return self.thread_repo.get_all()
 
-    def create_thread(self) -> Thread:
+    def create_thread(self, alumno_id: int) -> Thread:
         thread = client.beta.threads.create()
         thread_db = self.thread_repo.create()
         thread_db.thread_id = thread.id
+        thread_db.alumno_id = alumno_id
         return thread
 
     def update_thread(self, thread_id: str, update_data: Dict[str, Any]) -> Thread:

@@ -49,7 +49,7 @@ class AuthService:
             )
         
         alumno_info = data[0]
-        if alumno_info.get("claustro") != "EST" or alumno_info.get("calidad") != "A" or alumno_info.get("legajo") is not None:
+        if alumno_info.get("claustro") != "EST" or alumno_info.get("calidad") != "A":
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="No estás habilitado/a para registrarte en el Tutor"
@@ -103,7 +103,7 @@ class AuthService:
         payload = {
             "email": login_data.email,
             "password": login_data.password,
-            "returnSecretToken": True
+            "returnSecureToken": True
         }
 
         async with httpx.AsyncClient() as client:
@@ -127,18 +127,18 @@ class AuthService:
             )
         
         update_data = {
-            "firebase_uid": usuario.firebase_uid
+            "firebase_uid": firebase_uid
         }
 
         self.alumno_repo.update(alumno=usuario, update_data=update_data)
 
         expire = datetime.now(timezone.utc).replace(tzinfo=None) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
         payload_jwt = {"sub": usuario.email, "exp": expire}
-        access_token = jwt.encode(payload_jwt, JWT_SECRET_KEY, algorithm=ALGORITHM)
+        """ access_token = jwt.encode(payload_jwt, JWT_SECRET_KEY, algorithm=ALGORITHM) """
 
         return {
-            "token": access_token,
+            "token": firebase_data.get("idToken"),
             "usuario_id": usuario.alumno_id,
-            "email": usuario.email
+            "email_usuario": usuario.email
         }
     

@@ -8,6 +8,9 @@ class ThreadRepository:
     def get_by_id(self, thread_id: str):
         return self.db.query(Thread).filter(Thread.thread_id == thread_id).first()
     
+    def get_by_alumno(self, alumno_id: int):
+        return self.db.query(Thread).filter(Thread.alumno_id == alumno_id).first()
+    
     def get_all(self) -> list[Thread]:
         return self.db.query(Thread).all()
     

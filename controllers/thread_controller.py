@@ -30,6 +30,16 @@ def read_thread(thread_id: str, db: Session = Depends(get_db),
         raise HTTPException(status_code=404, detail=str(e))
     return thread
 
+@router.get("/{alumno_id}", response_model=ThreadOut)
+def read_thread(alumno_id: int, db: Session = Depends(get_db),
+                current_user: dict = Depends(get_current_user)):
+    service = ThreadService(db)
+    try:
+        thread = service.get_thread_by_alumno(alumno_id)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    return thread
+
 
 @router.post("/", response_model=ThreadOut, status_code=201)
 def create_thread(thread: ThreadCreate, db: Session = Depends(get_db),

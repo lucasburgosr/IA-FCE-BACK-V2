@@ -14,6 +14,12 @@ class AlumnoService:
             raise ValueError(f"Alumno con id {id} no encontrado")
         return alumno
     
+    def get_alumno_by_email(self, email: str) -> Alumno:
+        alumno = self.alumno_repo.get_by_email(email)
+        if not alumno:
+            raise ValueError(f"Alumno con id {id} no encontrado")
+        return alumno
+    
     def get_all_alumnos(self) -> List[Alumno]:
         return self.alumno_repo.get_all()
     

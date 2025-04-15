@@ -5,7 +5,7 @@ class AsistenteRepository:
     def __init__(self, db: Session):
         self.db = db
         
-    def get_by_id(self, asistente_id: int):
+    def get_by_id(self, asistente_id: str):
         return self.db.query(Asistente).filter(Asistente.asistente_id == asistente_id).first()
 
     def get_all(self) -> list[Asistente]:

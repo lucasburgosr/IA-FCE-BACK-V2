@@ -7,4 +7,4 @@ class LoginInput(BaseModel):
 class LoginResponse(BaseModel):
     token: str
     usuario_id: int
-    email: EmailStr
+    email_usuario: EmailStr
