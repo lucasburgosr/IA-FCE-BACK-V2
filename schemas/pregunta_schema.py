@@ -4,10 +4,13 @@ from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional
 
+from models.subtema import Subtema
+from schemas.subtema_schema import SubtemaOut
+
 # Schema base: define los campos esenciales de una pregunta
 class PreguntaBase(BaseModel):
     contenido: str
-    subtema_id: int
+    subtema: SubtemaOut
     id: int
 
 # Schema para la creación de una pregunta (input)

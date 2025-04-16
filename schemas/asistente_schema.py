@@ -1,6 +1,6 @@
 # schemas/asistente_schema.py
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional
 from datetime import datetime
 
@@ -20,7 +20,7 @@ class AsistenteUpdate(BaseModel):
 
 # Schema de salida (output), incluye el id y los campos de fecha
 class AsistenteOut(AsistenteBase):
-    asistente_id: str
+    asistente_id: str #= Field(..., alias="asistenteId")
 
     class Config:
         orm_mode = True

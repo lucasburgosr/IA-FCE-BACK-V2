@@ -6,8 +6,8 @@ from typing import Dict, Any, List
 from models.thread import Thread
 from sqlalchemy.orm import Session
 from openai import OpenAI
-from datetime import datetime
-from schemas.mensaje_schema import MensajeOut, MensajeCreate
+from schemas.mensaje_schema import MensajeOut
+from services.asistente_service import AsistenteService
 
 client = OpenAI()
 
@@ -17,13 +17,13 @@ class ThreadService:
         self.db = db
         self.thread_repo = ThreadRepository(db)
 
-    def get_thread_by_id(self, thread_id: str) -> Thread:
+    async def get_thread_by_id(self, thread_id: str) -> Thread:
         thread = self.thread_repo.get_by_id(thread_id)
         if not thread:
             raise ValueError(f"Thread con id {thread_id} no encontrado")
         return thread
     
-    def get_thread_by_alumno(self, alumno_id: int) -> Thread:
+    async def get_thread_by_alumno(self, alumno_id: int) -> Thread:
         thread = self.thread_repo.get_by_alumno(alumno_id=alumno_id)
 
         if not thread:
@@ -31,21 +31,24 @@ class ThreadService:
         
         return thread
 
-    def get_all_threads(self) -> List[Thread]:
+    async def get_all_threads(self) -> List[Thread]:
         return self.thread_repo.get_all()
 
-    def create_thread(self, alumno_id: int) -> Thread:
+    async def create_thread(self, thread_data: dict) -> Thread:
+        alumno_id = thread_data["alumno_id"]
+        asistente_id = thread_data["asistente_id"]
         thread = client.beta.threads.create()
         thread_db = self.thread_repo.create()
         thread_db.thread_id = thread.id
         thread_db.alumno_id = alumno_id
+        self.join_thread_asistente(thread_id=thread.id, asistente_id=asistente_id)
         return thread
 
-    def update_thread(self, thread_id: str, update_data: Dict[str, Any]) -> Thread:
+    async def update_thread(self, thread_id: str, update_data: Dict[str, Any]) -> Thread:
         thread = self.thread_repo.get_by_id(thread_id)
         return self.thread_repo.update(thread, update_data)
 
-    def delete_thread(self, thread_id: str) -> None:
+    async def delete_thread(self, thread_id: str) -> None:
         thread = self.thread_repo.get_by_id(thread_id)
         self.thread_repo.delete(thread)
 
@@ -77,3 +80,14 @@ class ThreadService:
             return run.status
         except Exception as e:
             return {"error": str(e)}
+        
+    async def join_thread_asistente(self, thread_id: str, asistente_id: str):
+        thread = self.get_thread_by_id(thread_id=thread_id)
+        asistente_service = AsistenteService()
+        asistente = asistente_service.get_asistente_by_id(asistente_id=asistente_id)
+
+        if not thread or not asistente:
+            raise ValueError("Thread o Asistente no encontrados")
+        
+        thread.asistentes.append(asistente)
+        self.db.commit()

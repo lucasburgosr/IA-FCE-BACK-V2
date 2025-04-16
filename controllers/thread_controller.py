@@ -12,61 +12,60 @@ router = APIRouter(
     tags=["Threads"]
 )
 
-
 @router.get("/", response_model=List[ThreadOut])
-def read_threads(db: Session = Depends(get_db),
+async def read_threads(db: Session = Depends(get_db),
                  current_user: dict = Depends(get_current_user)):
     service = ThreadService(db)
-    return service.get_all_threads()
+    return await service.get_all_threads()
 
 
 @router.get("/{thread_id}", response_model=ThreadOut)
-def read_thread(thread_id: str, db: Session = Depends(get_db),
+async def read_thread(thread_id: str, db: Session = Depends(get_db),
                 current_user: dict = Depends(get_current_user)):
     service = ThreadService(db)
     try:
-        thread = service.get_thread_by_id(thread_id)
+        thread = await service.get_thread_by_id(thread_id)
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     return thread
 
 @router.get("/{alumno_id}", response_model=ThreadOut)
-def read_thread(alumno_id: int, db: Session = Depends(get_db),
+async def read_thread(alumno_id: int, db: Session = Depends(get_db),
                 current_user: dict = Depends(get_current_user)):
     service = ThreadService(db)
     try:
-        thread = service.get_thread_by_alumno(alumno_id)
+        thread = await service.get_thread_by_alumno(alumno_id)
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     return thread
 
 
 @router.post("/", response_model=ThreadOut, status_code=201)
-def create_thread(thread: ThreadCreate, db: Session = Depends(get_db),
+async def create_thread(thread: ThreadCreate, db: Session = Depends(get_db),
                   current_user: dict = Depends(get_current_user)):
     service = ThreadService(db)
-    nuevo_thread = service.create_thread(thread.model_dump())
+    nuevo_thread = await service.create_thread(thread.model_dump())
     return nuevo_thread
 
-
-@router.put("/{thread_id}", response_model=ThreadOut)
-def update_thread(thread_id: str, thread_data: ThreadUpdate, db: Session = Depends(get_db),
+# Poco probable que sea utilizado
+""" @router.put("/{thread_id}", response_model=ThreadOut)
+async def update_thread(thread_id: str, thread_data: ThreadUpdate, db: Session = Depends(get_db),
                   current_user: dict = Depends(get_current_user)):
     service = ThreadService(db)
     try:
-        thread_actualizado = service.update_thread(
+        thread_actualizado = await service.update_thread(
             thread_id, thread_data.model_dump(exclude_unset=True))
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
-    return thread_actualizado
+    return thread_actualizado """
 
 
 @router.delete("/{thread_id}", status_code=204)
-def delete_thread(thread_id: str, db: Session = Depends(get_db),
+async def delete_thread(thread_id: str, db: Session = Depends(get_db),
                   current_user: dict = Depends(get_current_user)):
     service = ThreadService(db)
     try:
-        service.delete_thread(thread_id)
+        await service.delete_thread(thread_id)
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     return

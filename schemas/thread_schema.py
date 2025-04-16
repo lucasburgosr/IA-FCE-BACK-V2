@@ -1,17 +1,17 @@
 # schemas/thread_schema.py
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from datetime import datetime
 from typing import Optional
 
 # Schema base: define los campos esenciales para un Thread
 class ThreadBase(BaseModel):
     title: Optional[str] = None
-    id: int
 
 # Schema para la creación de un Thread (input)
 class ThreadCreate(ThreadBase):
-    pass
+    alumno_id: int = Field(..., alias="alumnoId")
+    asistente_id: str = Field(..., alias="asistenteId")
 
 # Schema para actualizar un Thread (input parcial)
 class ThreadUpdate(BaseModel):

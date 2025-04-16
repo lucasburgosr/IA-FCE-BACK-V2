@@ -12,7 +12,7 @@ class ProfesorBase(BaseModel):
     email: EmailStr
     materia: str
     firebase_uid: Optional[str] = None
-    contraseña: str
+    contrasena: str
 
 # Schema para crear un Profesor
 class ProfesorCreate(ProfesorBase):
