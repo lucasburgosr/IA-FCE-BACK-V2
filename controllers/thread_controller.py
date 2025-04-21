@@ -42,10 +42,10 @@ def read_thread(alumno_id: int, db: Session = Depends(get_db),
 
 
 @router.post("/", response_model=ThreadOut, status_code=201)
-def create_thread(thread: ThreadCreate, db: Session = Depends(get_db),
+def create_thread(thread: dict, db: Session = Depends(get_db),
                   current_user: dict = Depends(get_current_user)):
     service = ThreadService(db)
-    nuevo_thread = service.create_thread(thread.model_dump())
+    nuevo_thread = service.create_thread(thread)
     return nuevo_thread
 
 
@@ -82,14 +82,20 @@ async def read_thread_messages(thread_id: str, db: Session = Depends(get_db)):
     return mensajes
 
 
-@router.post("/{thread_id}", response_model=List[MensajeOut])
-async def send_message(texto: str, thread_id: str, asistente_id: str, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+@router.post("/{thread_id}")
+async def send_message(mensaje_data: dict, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     try:
+
+        texto = mensaje_data["input"]
+        thread_id = mensaje_data["thread_id"]
+        asistente_id = mensaje_data["asistente_id"]
+
         service = ThreadService(db)
-        response = service.send_message(thread_id=thread_id, texto=texto, asistente_id=asistente_id)
+        response = await service.send_message(thread_id=thread_id, texto=texto, asistente_id=asistente_id)
 
         if response == "completed":
-            return await service.get_messages(thread_id=thread_id)
+            mensajes = await service.get_messages(thread_id=thread_id)
+            return mensajes
 
     except Exception as e:
         raise HTTPException(status_code=404, detail=str(e))

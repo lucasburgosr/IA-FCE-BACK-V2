@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from openai import OpenAI
 from datetime import datetime
 from schemas.mensaje_schema import MensajeOut, MensajeCreate
+from repositories.asistente_repository import AsistenteRepository
 
 client = OpenAI()
 
@@ -16,6 +17,7 @@ class ThreadService:
     def __init__(self, db: Session):
         self.db = db
         self.thread_repo = ThreadRepository(db)
+        self.asistente_repo = AsistenteRepository(db)
 
     def get_thread_by_id(self, thread_id: str) -> Thread:
         thread = self.thread_repo.get_by_id(thread_id)
@@ -34,11 +36,26 @@ class ThreadService:
     def get_all_threads(self) -> List[Thread]:
         return self.thread_repo.get_all()
 
-    def create_thread(self, alumno_id: int) -> Thread:
+    def create_thread(self, thread_data: dict) -> Thread:
+        alumno_id = thread_data["alumnoId"]
+        asistente_id = thread_data["asistente_id"]
+
         thread = client.beta.threads.create()
-        thread_db = self.thread_repo.create()
-        thread_db.thread_id = thread.id
-        thread_db.alumno_id = alumno_id
+        thread_db = self.thread_repo.create({
+            "thread_id": thread.id,
+            "alumno_id": alumno_id
+        })
+
+        asistente = self.asistente_repo.get_by_id(asistente_id=asistente_id)
+
+        if not asistente:
+            raise ValueError("No se encontró el asistente")
+        
+        thread_db.asistentes.append(asistente)
+
+        self.db.commit()
+        self.db.refresh(thread_db)
+
         return thread
 
     def update_thread(self, thread_id: str, update_data: Dict[str, Any]) -> Thread:
@@ -64,13 +81,13 @@ class ThreadService:
 
     async def send_message(self, thread_id: str, texto: str, asistente_id: str) -> Dict[str, Any]:
         try:
-            mensaje = await asyncio(client.beta.threads.messages.create,
+            mensaje = await asyncio.to_thread(client.beta.threads.messages.create,
                                     thread_id=thread_id,
                                     content=texto,
                                     role="user")
             # Para acceder al mensaje generado por el Asistente hay que traer de nuevo la lista
             # de mensajes
-            run = await asyncio(client.beta.threads.runs.create_and_poll,
+            run = await asyncio.to_thread(client.beta.threads.runs.create_and_poll,
                                 thread_id=thread_id,
                                 assistant_id=asistente_id)
             
