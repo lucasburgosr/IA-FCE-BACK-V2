@@ -30,7 +30,7 @@ async def read_thread(thread_id: str, db: Session = Depends(get_db),
     return thread
 
 @router.get("/{alumno_id}", response_model=ThreadOut)
-async def read_thread(alumno_id: int, db: Session = Depends(get_db),
+async def read_thread_by_alumno(alumno_id: int, db: Session = Depends(get_db),
                 current_user: dict = Depends(get_current_user)):
     service = ThreadService(db)
     try:
