@@ -21,8 +21,6 @@ class ThreadUpdate(BaseModel):
 # Schema de salida (output) para Thread
 class ThreadOut(ThreadBase):
     thread_id: str
-    started_at: datetime
-    updated_at: datetime
 
     class Config:
         orm_mode = True
