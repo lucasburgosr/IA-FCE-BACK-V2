@@ -9,6 +9,7 @@ from openai import OpenAI
 from datetime import datetime
 from schemas.mensaje_schema import MensajeOut, MensajeCreate
 from repositories.asistente_repository import AsistenteRepository
+from services.asistente_service import AsistenteService
 
 client = OpenAI()
 

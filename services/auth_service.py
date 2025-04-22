@@ -7,7 +7,7 @@ from firebase_admin import auth
 from models.alumno import Alumno
 from datetime import datetime, timezone, timedelta
 from jose import jwt
-from repositories.alumno_repository import AlumnoRepository
+from repositories.usuario_repository import UsuarioRepository
 from schemas.login_schema import LoginInput
 
 FIREBASE_API_KEY = os.getenv("FIREBASE_API_KEY")  # Si lo necesitas para otros fines
@@ -18,7 +18,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60
 class AuthService:
     def __init__(self, db: Session):
         self.db = db
-        self.alumno_repo = AlumnoRepository(db)
+        self.usuario_repo = UsuarioRepository(db)
 
     async def registrar_alumnos(self, register_data: dict) -> dict:
 
@@ -66,7 +66,7 @@ class AuthService:
         
         try:
 
-            existing_user = self.alumno_repo.get_by_email(alumno_info.get("email"))
+            existing_user = self.usuario_repo.get_by_email(alumno_info.get("email"))
             if existing_user:
                 raise HTTPException(
                     status_code=status.HTTP_409_CONFLICT,
@@ -82,7 +82,7 @@ class AuthService:
             "firebase_uid": firebase_uid
             }
 
-            self.alumno_repo.create(alumno)
+            self.usuario_repo.create(alumno)
             self.db.commit()
         except Exception as e:
             raise HTTPException(
@@ -118,7 +118,7 @@ class AuthService:
         firebase_data = response.json()
         firebase_uid = firebase_data.get("localId")
 
-        usuario = self.alumno_repo.get_by_email(email=login_data.email)
+        usuario = self.usuario_repo.get_by_email(email=login_data.email)
 
         if not usuario:
             raise HTTPException(
@@ -130,7 +130,7 @@ class AuthService:
             "firebase_uid": firebase_uid
         }
 
-        self.alumno_repo.update(alumno=usuario, update_data=update_data)
+        self.usuario_repo.update(usuario=usuario, update_data=update_data)
 
         expire = datetime.now(timezone.utc).replace(tzinfo=None) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
         payload_jwt = {"sub": usuario.email, "exp": expire}
@@ -138,7 +138,7 @@ class AuthService:
 
         return {
             "token": firebase_data.get("idToken"),
-            "usuario_id": usuario.alumno_id,
+            "usuario_id": usuario.id,
             "email_usuario": usuario.email
         }
     
