@@ -8,3 +8,4 @@ class LoginResponse(BaseModel):
     token: str
     usuario_id: int
     email_usuario: EmailStr
+    type: str

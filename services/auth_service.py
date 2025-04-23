@@ -139,6 +139,7 @@ class AuthService:
         return {
             "token": firebase_data.get("idToken"),
             "usuario_id": usuario.id,
-            "email_usuario": usuario.email
+            "email_usuario": usuario.email,
+            "type": usuario.type
         }
     

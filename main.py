@@ -34,6 +34,10 @@ if not firebase_admin._apps:
 else:
     print("La app ya está inicializada.")
 
+@app.get("/ping")
+async def ping():
+    return {"status": "ok"}
+
 api_router = APIRouter(prefix="/api/v2")
 
 api_router.include_router(alumno_router)
