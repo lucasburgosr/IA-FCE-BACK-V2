@@ -1,5 +1,6 @@
 from repositories.profesor_repository import ProfesorRepository
 from typing import Dict, Any, List
+from models.alumno import Alumno
 from models.profesor import Profesor
 from sqlalchemy.orm import Session
 
@@ -29,3 +30,11 @@ class ProfesorService:
     def delete_profesor(self, profesor_id: int) -> None:
         profesor = self.profesor_repo.get_by_id(profesor_id)
         self.profesor_repo.delete(profesor)
+
+    def listar_estudiantes(self, profesor_id: int) -> List[Alumno]:
+        alumnos = self.profesor_repo.get_estudiantes(profesor_id)
+        if not alumnos:
+            # opcional: lanzar error si prefieres
+            # raise ValueError(f"No se encontraron alumnos para el profesor {profesor_id}")
+            pass
+        return alumnos

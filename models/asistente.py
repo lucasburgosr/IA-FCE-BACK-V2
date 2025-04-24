@@ -1,5 +1,5 @@
 from config.db_config import Base
-from sqlalchemy import Column, Integer, String, DateTime, Text
+from sqlalchemy import Column, Integer, String, DateTime, Text, ForeignKey
 from sqlalchemy.orm import relationship
 from datetime import datetime, timezone
 from models.thread_asistente import thread_asistente
@@ -12,7 +12,12 @@ class Asistente(Base):
     instructions = Column(Text, nullable = False)
     created_at = Column(DateTime(timezone=True), default=datetime.now(timezone.utc))
     updated_at = Column(DateTime(timezone=True), default=datetime.now(timezone.utc))
-    
+    materia_id = Column(Integer, ForeignKey("materia.materia_id"), nullable=False)
+
+    materia = relationship(
+        "Materia",
+        back_populates="asistentes",
+    )
     threads = relationship("Thread", secondary=thread_asistente, back_populates="asistentes")
 
     def __repr__(self):

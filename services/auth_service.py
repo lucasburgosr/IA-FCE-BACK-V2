@@ -8,6 +8,7 @@ from models.alumno import Alumno
 from datetime import datetime, timezone, timedelta
 from jose import jwt
 from repositories.usuario_repository import UsuarioRepository
+from repositories.alumno_repository import AlumnoRepository
 from schemas.login_schema import LoginInput
 
 FIREBASE_API_KEY = os.getenv("FIREBASE_API_KEY")  # Si lo necesitas para otros fines
@@ -19,6 +20,7 @@ class AuthService:
     def __init__(self, db: Session):
         self.db = db
         self.usuario_repo = UsuarioRepository(db)
+        self.alumno_repo = AlumnoRepository(db)
 
     async def registrar_alumnos(self, register_data: dict) -> dict:
 
@@ -126,6 +128,15 @@ class AuthService:
                 detail="No estás registrado como usuario. Regístrate para poder iniciar sesión."
             )
         
+        alumno = self.alumno_repo.get_by_id(id=usuario.id)
+
+        update_alumno = {
+            "last_login": datetime.now(tz=None)
+        }
+        
+        if usuario.type == "alumno":
+            self.alumno_repo.update(alumno, update_alumno)
+
         update_data = {
             "firebase_uid": firebase_uid
         }
@@ -135,7 +146,7 @@ class AuthService:
         expire = datetime.now(timezone.utc).replace(tzinfo=None) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
         payload_jwt = {"sub": usuario.email, "exp": expire}
         """ access_token = jwt.encode(payload_jwt, JWT_SECRET_KEY, algorithm=ALGORITHM) """
-
+        
         return {
             "token": firebase_data.get("idToken"),
             "usuario_id": usuario.id,

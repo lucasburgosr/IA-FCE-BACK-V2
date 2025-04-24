@@ -12,11 +12,11 @@ class Thread(Base):
     started_at = Column(DateTime(timezone=True), default=datetime.now(timezone.utc))
     updated_at = Column(DateTime(timezone=True), default=datetime.now(timezone.utc))
 
-    # Clave foránea a Alumno
+    # Relaciones
     alumno_id = Column(Integer, ForeignKey("alumno.alumno_id"), nullable=False)
-
-    # Relación con la tabla intermedia ThreadAsistente
     asistentes = relationship("Asistente", secondary=thread_asistente, back_populates="threads")
+    sesiones = relationship("SesionChat", back_populates="thread", cascade="all, delete-orphan")
+
 
     def __repr__(self):
         return f"<Thread(thread_id={self.thread_id}, title='{self.title}')>"

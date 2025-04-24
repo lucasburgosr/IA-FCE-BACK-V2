@@ -1,6 +1,8 @@
 from sqlalchemy.orm import Session
 from models.profesor import Profesor
 from repositories.usuario_repository import UsuarioRepository
+from models.alumno import Alumno
+from models.asistente import Asistente
 
 class ProfesorRepository:
     def __init__(self, db: Session):
@@ -30,3 +32,24 @@ class ProfesorRepository:
         self.db.delete(profesor)
         self.db.commit()
     
+    def get_estudiantes(self, profesor_id: int) -> list[Alumno]:
+
+        profesor = (
+            self.db.query(Profesor)
+                   .filter_by(profesor_id=profesor_id)
+                   .one_or_none()
+        )
+        if not profesor:
+            return []
+
+        mat_id = profesor.materia_id
+
+        alumnos = (
+            self.db.query(Alumno)
+                   .join(Alumno.asistentes)                    # alumno_asistente + asistentes
+                   .filter(Asistente.materia_id == mat_id)    # solo asistentes de su materia
+                   .distinct()
+                   .all()
+        )
+        return alumnos
+        

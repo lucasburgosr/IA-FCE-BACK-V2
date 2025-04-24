@@ -11,6 +11,11 @@ class Materia(Base):
     # Relación con Unidad: una materia contiene varias unidades
     unidades = relationship("Unidad", backref="materia", cascade="all, delete-orphan")
     profesores = relationship("Profesor", backref="materia")
+    asistentes = relationship(
+        "Asistente",
+        back_populates="materia",
+        cascade="all, delete-orphan",
+    )
 
     def __repr__(self):
         return f"<Materia(materia_id={self.materia_id}, nombre='{self.nombre}')>"

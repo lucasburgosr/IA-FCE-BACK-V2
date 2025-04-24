@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
+from schemas.alumno_schema import AlumnoOut
 from schemas.profesor_schema import ProfesorOut, ProfesorCreate, ProfesorUpdate
 from services.profesor_service import ProfesorService
 from config.db_config import get_db
@@ -52,3 +53,13 @@ def delete_profesor(profesor_id: int, db: Session = Depends(get_db),
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     return
+
+@router.get("/{profesor_id}/alumnos", response_model=List[AlumnoOut])
+def get_alumnos_by_profesor(profesor_id: int, db: Session = Depends(get_db),
+                            current_user: dict = Depends(get_current_user)):
+    service = ProfesorService(db=db)
+    alumnos = service.listar_estudiantes(profesor_id=profesor_id)
+    if not alumnos:
+        return []
+    
+    return alumnos

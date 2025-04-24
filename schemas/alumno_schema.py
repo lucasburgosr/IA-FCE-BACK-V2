@@ -23,7 +23,9 @@ class AlumnoUpdate(BaseModel):
     
 class AlumnoOut(AlumnoBase):
     id: int
-    last_login: datetime
+    nombres: str
+    apellido: str
+    last_login: datetime | None
     asistentes: List[AsistenteOut] = []
     preguntas: List[PreguntaOut] = []
     evaluaciones: List[EvaluacionOut] = []
