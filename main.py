@@ -9,6 +9,7 @@ from controllers.subtema_controller import router as subtema_router
 from controllers.thread_controller import router as thread_router
 from controllers.unidad_controller import router as unidad_router
 from controllers.auth_controller import router as auth_router
+from controllers.sesion_controller import router as sesion_router
 from fastapi.middleware.cors import CORSMiddleware
 import firebase_admin
 from config.firebase import cred
@@ -50,6 +51,7 @@ api_router.include_router(subtema_router)
 api_router.include_router(thread_router)
 api_router.include_router(unidad_router)
 api_router.include_router(auth_router)
+api_router.include_router(sesion_router)
 
 app.include_router(api_router)
 

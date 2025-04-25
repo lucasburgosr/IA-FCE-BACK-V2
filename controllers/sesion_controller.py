@@ -1,29 +1,38 @@
 # controllers/session_controller.py
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from models.sesion_chat import SesionChat
 from config.db_config import get_db
-from datetime import datetime, timezone
 from utils.dependencies import get_current_user
+from schemas.sesion_chat_schema import (
+    SesionStartRequest,
+    SesionStartResponse,
+    SesionEndRequest
+)
+from services.sesion_chat_service import SesionService
 
-router = APIRouter(prefix="/sesiones", tags=["Sessions"])
+router = APIRouter(prefix="/sesiones", tags=["Sesiones"])
 
-@router.post("/iniciar", response_model=int)
-def start_session(thread_id: str, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
-    alumno_id = current_user["uid_alumno"]  # extraes el id de la sesión decoded_token
-    session = SesionChat(alumno_id=alumno_id, thread_id=thread_id)
-    db.add(session)
-    db.commit()
-    db.refresh(session)
-    return session.sesion_id
 
-@router.post("/terminar", response_model=None)
-def end_session(session_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
-    sess = db.query(SesionChat).filter_by(session_id=session_id).one_or_none()
-    if not sess or sess.finalizada_en:
-        raise HTTPException(404, "Sesión no encontrada o ya finalizada")
-    sess.finalizada_en = datetime.now(timezone.utc)
-    delta = sess.finalizada_en - sess.iniciada_en
-    sess.alumno.tiempo_interracion += delta
-    db.commit()
+@router.post("/iniciar/{alumno_id}", response_model=SesionStartResponse, status_code=status.HTTP_201_CREATED)
+async def start_session(alumno_id: int, req: SesionStartRequest, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+    print(alumno_id)
+    service = SesionService(db)
+    session = service.start_session(alumno_id, req.thread_id)
+    return SesionStartResponse(sesion_id=session.sesion_id)
+
+
+@router.post(
+    "/finalizar",
+    status_code=status.HTTP_204_NO_CONTENT
+)
+async def end_session(
+    req: SesionEndRequest,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
+):
+    service = SesionService(db)
+    try:
+        service.end_session(req.sesion_id)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
     return

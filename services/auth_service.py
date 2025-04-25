@@ -84,7 +84,7 @@ class AuthService:
             "firebase_uid": firebase_uid
             }
 
-            self.usuario_repo.create(alumno)
+            self.alumno_repo.create(alumno)
             self.db.commit()
         except Exception as e:
             raise HTTPException(

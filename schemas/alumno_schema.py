@@ -1,7 +1,7 @@
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
 from typing import Optional, List
-
+from datetime import timedelta
 from schemas.asistente_schema import AsistenteOut
 from schemas.evaluacion_schema import EvaluacionOut
 from schemas.pregunta_schema import PreguntaOut
@@ -26,6 +26,8 @@ class AlumnoOut(AlumnoBase):
     nombres: str
     apellido: str
     last_login: datetime | None
+    mensajes_enviados: int = 0
+    tiempo_interaccion: timedelta
     asistentes: List[AsistenteOut] = []
     preguntas: List[PreguntaOut] = []
     evaluaciones: List[EvaluacionOut] = []

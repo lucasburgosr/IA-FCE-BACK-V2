@@ -19,12 +19,12 @@ async def read_threads(db: Session = Depends(get_db),
     return await service.get_all_threads()
 
 
-@router.get("/{thread_id}", response_model=ThreadOut)
-async def read_thread(thread_id: str, db: Session = Depends(get_db),
+@router.get("/{id}", response_model=ThreadOut)
+async def read_thread(id: str, db: Session = Depends(get_db),
                 current_user: dict = Depends(get_current_user)):
     service = ThreadService(db)
     try:
-        thread = await service.get_thread_by_id(thread_id)
+        thread = await service.get_thread_by_id(id)
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     return thread
@@ -48,52 +48,53 @@ def create_thread(thread: dict, db: Session = Depends(get_db),
     return nuevo_thread
 
 # Poco probable que sea utilizado
-""" @router.put("/{thread_id}", response_model=ThreadOut)
-async def update_thread(thread_id: str, thread_data: ThreadUpdate, db: Session = Depends(get_db),
+""" @router.put("/{id}", response_model=ThreadOut)
+async def update_thread(id: str, thread_data: ThreadUpdate, db: Session = Depends(get_db),
                   current_user: dict = Depends(get_current_user)):
     service = ThreadService(db)
     try:
         thread_actualizado = await service.update_thread(
-            thread_id, thread_data.model_dump(exclude_unset=True))
+            id, thread_data.model_dump(exclude_unset=True))
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     return thread_actualizado """
 
 
-@router.delete("/{thread_id}", status_code=204)
-async def delete_thread(thread_id: str, db: Session = Depends(get_db),
+@router.delete("/{id}", status_code=204)
+async def delete_thread(id: str, db: Session = Depends(get_db),
                   current_user: dict = Depends(get_current_user)):
     service = ThreadService(db)
     try:
-        await service.delete_thread(thread_id)
+        await service.delete_thread(id)
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     return
 
 
-@router.get("/{thread_id}/messages", response_model=List[MensajeOut])
-async def read_thread_messages(thread_id: str, db: Session = Depends(get_db)):
+@router.get("/{id}/messages", response_model=List[MensajeOut])
+async def read_thread_messages(id: str, db: Session = Depends(get_db)):
     service = ThreadService(db)
     try:
-        mensajes = await service.get_messages(thread_id=thread_id)
+        mensajes = await service.get_messages(id=id)
     except Exception as e:
         raise HTTPException(status_code=404, detail=str(e))
     return mensajes
 
 
-@router.post("/{thread_id}")
+@router.post("/{id}")
 async def send_message(mensaje_data: dict, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     try:
 
         texto = mensaje_data["input"]
-        thread_id = mensaje_data["thread_id"]
+        id = mensaje_data["id"]
         asistente_id = mensaje_data["asistente_id"]
+        alumno_id = mensaje_data["alumno_id"]
 
         service = ThreadService(db)
-        response = await service.send_message(thread_id=thread_id, texto=texto, asistente_id=asistente_id)
+        response = await service.send_message(id=id, texto=texto, asistente_id=asistente_id, alumno_id=alumno_id)
 
         if response == "completed":
-            mensajes = await service.get_messages(thread_id=thread_id)
+            mensajes = await service.get_messages(id=id)
             return mensajes
 
     except Exception as e:

@@ -20,7 +20,7 @@ class ThreadUpdate(BaseModel):
 
 # Schema de salida (output) para Thread
 class ThreadOut(ThreadBase):
-    thread_id: str
+    id: str
 
     class Config:
         orm_mode = True

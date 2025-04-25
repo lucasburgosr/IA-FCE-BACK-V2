@@ -7,10 +7,10 @@ class SesionChat(Base):
     __tablename__ = "sesion_chat"
 
     sesion_id = Column(Integer, primary_key=True, index=True)
-    alumno_id = Column(Integer, nullable=False)
-    thread_id = Column(String(255), ForeignKey("thread.thread_id"),nullable=False)
+    alumno_id = Column(Integer, ForeignKey("alumno.alumno_id"), nullable=False)
+    thread_id = Column(String(255), ForeignKey("thread.id"),nullable=False)
     iniciada_en = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     finalizada_en = Column(DateTime(timezone=True), nullable=True)
 
     alumno = relationship("Alumno", back_populates="sesiones")
-    thread = relationship("Thread", back_populates="thread")
+    thread = relationship("Thread", back_populates="sesiones")

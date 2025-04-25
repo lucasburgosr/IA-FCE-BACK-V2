@@ -7,7 +7,7 @@ class MensajeBase(BaseModel):
     rol: str
 
 class MensajeCreate(MensajeBase):
-    thread_id: str
+    id: str
 
 class MensajeOut(MensajeBase):
     id: str
