@@ -10,17 +10,21 @@ class AsistenteService:
     def __init__(self, db: Session):
         self.db = db
         self.asistente_repo = AsistenteRepository(db)
-        
+    
+    # Obtiene el asistente desde la API con su ID
     def get_asistente_by_id(self, asistente_id: str) -> Asistente:
         asistente = client.beta.assistants.retrieve(asistente_id)
         if not asistente:
             raise ValueError(f"Asistente con el id {asistente_id} no encontrado")
         return asistente
     
+    # Devuelve una lista de asistentes desde la base de datos, porque solo nos interesa tener nombre y ID. REVISAR"
     def get_all_asistentes(self) -> List[Asistente]:
         return self.asistente_repo.get_all()
         
-    def create_asistentes(self, asistente_data: Dict[str, Any]) -> Asistente:
+    """ Por el momento no vamos a crear asistentes desde la app.
+
+     def create_asistentes(self, asistente_data: Dict[str, Any]) -> Asistente:
         
         asistente = client.beta.assistants.create(
             model= "o3-mini",
@@ -28,8 +32,9 @@ class AsistenteService:
             name=asistente_data.get("nombre")
         )
 
-        asistente_db = self.asistente_repo.create(asistente)
+        asistente_db = self.asistente_repo.create(asistente) """
     
+    # Este método se encarga de actualizar tanto el objeto Asistente de la DB como el de la API.
     def update_asistente(self, asistente_id: str, update_data: Dict[str, Any]) -> dict:
         # 1. Actualizar en OpenAI
         asistente_api = client.beta.assistants.update(
@@ -57,9 +62,9 @@ class AsistenteService:
             "name": asistente_api.name,
             "instructions": asistente_api.instructions,
         }
-
-
     
-    def delete_asistente(self, asistente_id: str) -> None:
+    """ Por ahora no vamos a eliminar asistentes desde la app
+
+     def delete_asistente(self, asistente_id: str) -> None:
         asistente = self.asistente_repo.get_by_id(asistente_id)
-        self.asistente_repo.delete(asistente)
+        self.asistente_repo.delete(asistente) """

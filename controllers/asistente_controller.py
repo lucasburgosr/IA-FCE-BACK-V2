@@ -16,6 +16,7 @@ def read_asistentes(db: Session = Depends(get_db)):
     service = AsistenteService(db)
     return service.get_all_asistentes()
 
+# Obtiene el asistente de la API y lo mapeamos a un diccionario con el nombre de las propiedades que necesitamos en el cliente
 @router.get("/{asistente_id}", response_model=AsistenteOpenAIOut)
 def read_asistente(asistente_id: str, db: Session = Depends(get_db),
     current_user: dict = Depends(get_current_user)):
@@ -24,7 +25,7 @@ def read_asistente(asistente_id: str, db: Session = Depends(get_db),
         asistente_openai = service.get_asistente_by_id(asistente_id)
         asistente_dict = {
             "asistente_id": asistente_openai.id,
-            "name": asistente_openai.name,          # <-- aquí
+            "name": asistente_openai.name,
             "instructions": asistente_openai.instructions,
         }
         print("asistente_dict:", asistente_dict)
@@ -40,6 +41,7 @@ def create_asistente(asistente: AsistenteCreate, db: Session = Depends(get_db),
     nuevo_asistente = service.create_asistente(asistente.model_dump())
     return nuevo_asistente
 
+# Llamamos al método que actualiza ambos Asistentes.
 @router.put("/{asistente_id}", response_model=AsistenteOpenAIOut)
 def update_asistente(asistente_id: str, asistente_data: AsistenteUpdate, db: Session = Depends(get_db),
     current_user: dict = Depends(get_current_user)):
@@ -49,7 +51,6 @@ def update_asistente(asistente_id: str, asistente_data: AsistenteUpdate, db: Ses
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     return AsistenteOpenAIOut.model_validate(asistente_actualizado)
-
 
 @router.delete("/{asistente_id}", status_code=204)
 def delete_asistente(asistente_id: str, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):

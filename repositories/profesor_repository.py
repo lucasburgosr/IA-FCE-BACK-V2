@@ -1,15 +1,23 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from models.profesor import Profesor
 from repositories.usuario_repository import UsuarioRepository
 from models.alumno import Alumno
 from models.asistente import Asistente
+from models.materia import Materia
 
 class ProfesorRepository:
     def __init__(self, db: Session):
         self.db = db
         
     def get_by_id(self, profesor_id: int) -> Profesor:
-        return self.db.query(Profesor).filter(Profesor.profesor_id == profesor_id).first()
+        return (
+            self.db.query(Profesor)
+            .options(
+                joinedload(Profesor.materia).joinedload(Materia.asistente)  # <--- Esto es importante
+            )
+            .filter(Profesor.profesor_id == profesor_id)
+            .first()
+        )
     
     def get_all(self) -> list[Profesor]:
         return self.db.query(Profesor).all()
