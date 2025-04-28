@@ -1,8 +1,8 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, validator
 from datetime import datetime
 from typing import Optional, List
 from datetime import timedelta
-from schemas.asistente_schema import AsistenteOut
+from schemas.asistente_schema import AsistenteDBOut
 from schemas.evaluacion_schema import EvaluacionOut
 from schemas.pregunta_schema import PreguntaOut
 from schemas.thread_schema import ThreadOut
@@ -27,11 +27,20 @@ class AlumnoOut(AlumnoBase):
     apellido: str
     last_login: datetime | None
     mensajes_enviados: int = 0
-    tiempo_interaccion: timedelta
-    asistentes: List[AsistenteOut] = []
+    tiempo_interaccion: str
+    asistentes: List[AsistenteDBOut] = []
     preguntas: List[PreguntaOut] = []
     evaluaciones: List[EvaluacionOut] = []
     threads: List[ThreadOut] = []
     
     class Config:
         orm_mode = True
+    
+    @validator("tiempo_interaccion", pre=True)
+    def format_tiempo_interaccion(cls, v):
+        if isinstance(v, timedelta):
+            total_seconds = int(v.total_seconds())
+            hours, remainder = divmod(total_seconds, 3600)
+            minutes, seconds = divmod(remainder, 60)
+            return f"{hours:02}:{minutes:02}:{seconds:02}"
+        return v

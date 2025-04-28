@@ -1,26 +1,34 @@
-# schemas/asistente_schema.py
-
 from pydantic import BaseModel, Field
 from typing import Optional
 from datetime import datetime
 
-# Schema base: define los campos comunes para Asistente
 class AsistenteBase(BaseModel):
-    nombre: str
+    nombre: str = Field(..., alias="name")   # <--- ALIAS!!
     instructions: str
-
-# Schema para la creación de un Asistente
-class AsistenteCreate(AsistenteBase):
-    pass
-
-# Schema para la actualización (todos los campos son opcionales)
-class AsistenteUpdate(BaseModel):
-    nombre: Optional[str] = None
-    instructions: Optional[str] = None
-
-# Schema de salida (output), incluye el id y los campos de fecha
-class AsistenteOut(AsistenteBase):
-    asistente_id: str #= Field(..., alias="asistenteId")
 
     class Config:
         orm_mode = True
+        allow_population_by_field_name = True  # permite usar "nombre" internamente y "name" externamente
+
+class AsistenteCreate(AsistenteBase):
+    pass
+
+class AsistenteUpdate(BaseModel):
+    nombre: Optional[str] = Field(None, alias="name")
+    instructions: Optional[str] = None
+
+    class Config:
+        orm_mode = True
+        allow_population_by_field_name = True
+
+class AsistenteDBOut(AsistenteBase):
+    asistente_id: str
+    nombre: str
+
+class AsistenteOpenAIOut(AsistenteBase):
+    asistente_id: str
+    name: str
+
+    class Config:
+        orm_mode = True
+        allow_population_by_field_name = True
