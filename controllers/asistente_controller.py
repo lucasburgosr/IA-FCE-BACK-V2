@@ -28,18 +28,17 @@ def read_asistente(asistente_id: str, db: Session = Depends(get_db),
             "name": asistente_openai.name,
             "instructions": asistente_openai.instructions,
         }
-        print("asistente_dict:", asistente_dict)
         return AsistenteOpenAIOut.model_validate(asistente_dict)
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
 
 
-@router.post("/", response_model=AsistenteDBOut, status_code=201)
+""" @router.post("/", response_model=AsistenteDBOut, status_code=201)
 def create_asistente(asistente: AsistenteCreate, db: Session = Depends(get_db),
     current_user: dict = Depends(get_current_user)):
     service = AsistenteService(db)
     nuevo_asistente = service.create_asistente(asistente.model_dump())
-    return nuevo_asistente
+    return nuevo_asistente """
 
 # Llamamos al método que actualiza ambos Asistentes.
 @router.put("/{asistente_id}", response_model=AsistenteOpenAIOut)

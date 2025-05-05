@@ -8,6 +8,9 @@ class SessionRepository:
     def __init__(self, db: Session):
         self.db = db
 
+    def get_by_id(self, sesion_id: int) -> SesionChat:
+        return self.db.query(SesionChat).filter(SesionChat.sesion_id==sesion_id).first()
+
     def create(self, alumno_id: int, thread_id: str) -> SesionChat:
         session = SesionChat(
             alumno_id=alumno_id,

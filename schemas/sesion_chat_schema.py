@@ -8,4 +8,6 @@ class SesionStartResponse(BaseModel):
     sesion_id: int
 
 class SesionEndRequest(BaseModel):
+    alumno_id: int
     sesion_id: int
+    thread_id: str

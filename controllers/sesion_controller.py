@@ -32,7 +32,10 @@ async def end_session(
 ):
     service = SesionService(db)
     try:
-        service.end_session(req.sesion_id)
+        print("THREAD ID:", req.thread_id)
+        print("ALUMNO ID:", req.alumno_id)
+        print("SESION ID:", req.sesion_id)
+        service.end_session(alumno_id=req.alumno_id, thread_id=req.thread_id, sesion_id=req.sesion_id)
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     return

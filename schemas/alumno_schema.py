@@ -32,6 +32,7 @@ class AlumnoOut(AlumnoBase):
     preguntas: List[PreguntaOut] = []
     evaluaciones: List[EvaluacionOut] = []
     threads: List[ThreadOut] = []
+    resumen_ultima_sesion: str
     
     class Config:
         orm_mode = True

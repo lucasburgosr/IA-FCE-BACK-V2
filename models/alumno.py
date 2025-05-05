@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, DateTime, ForeignKey, Interval
+from sqlalchemy import Column, Integer, DateTime, ForeignKey, Interval, Text
 from sqlalchemy.orm import relationship
 from datetime import datetime, timezone, timedelta
 from models.usuario import Usuario
@@ -14,6 +14,7 @@ class Alumno(Usuario):
     mensajes_enviados = Column(Integer, default=0, nullable=False)
     tiempo_interaccion = Column(
         Interval, default=lambda: timedelta(), nullable=False)
+    resumen_ultima_sesion = Column(Text, nullable=True)
 
     # Relaciones
     preguntas = relationship("Pregunta", backref="alumno",
