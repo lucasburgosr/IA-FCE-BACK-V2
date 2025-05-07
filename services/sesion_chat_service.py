@@ -34,16 +34,11 @@ class SesionService:
 
         filtro = int(filtro_fecha.timestamp())
 
-        print(filtro)
-
         mensajes_filtrados = [
             m for m in mensajes.data if m.created_at >= filtro
         ]
 
-        print(mensajes_filtrados)
-
         mensajes_formatted = []
-
 
         for m in mensajes_filtrados:
             if m.role not in {"user", "assistant"}:
@@ -58,13 +53,14 @@ class SesionService:
                             "content": texto
                         })
 
-        for m in mensajes_formatted:
-            print(m)
+        if not mensajes_formatted:
+            print("⚠️ No se encontraron mensajes nuevos en la sesión. Se conserva el resumen anterior.")
+            return
 
         resumen_prompt = [
             {
                 "role": "system",
-                "content": "Eres un asistente que ayuda a resumir conversaciones entre un estudiante de Matemática de nivel universitario y un tutor virtual. Escribe un resumen breve (3 a 5 líneas) de lo que se discutió en esta sesión sin importar la brevedad o extensión de la misma."
+                "content": "Eres un asistente que ayuda a resumir conversaciones entre un estudiante de Matemática de nivel universitario y un tutor virtual. Escribe un resumen breve (3 a 5 líneas) de lo que se discutió en esta sesión sin importar la brevedad o extensión de la misma. En caso de que no se te proporcionen mensajes, responde que no hubo mensajes en la última sesión."
             },
             *mensajes_formatted,
             {
@@ -83,6 +79,7 @@ class SesionService:
         update_data = {
             "resumen_ultima_sesion": resumen
         }
-        print(resumen)
+
         alumno = self.alumno_repo.get_by_id(id=alumno_id)
         self.alumno_repo.update(alumno=alumno, update_data=update_data)
+

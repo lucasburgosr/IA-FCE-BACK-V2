@@ -3,7 +3,7 @@ SELECT * FROM alumno;
 
 INSERT INTO usuario (email, contrasena, nombres, apellido, nro_documento, firebase_uid, created_at, type)
 VALUES 
-('pennisi.nazarena@fce.uncu.edu.ar','$2b$12$0vPwH9LcDZvlSx9b3zSTDeYCSdQ/X0Gao8CWBRxCJReNEkvdiT66O', 'Nazarena', 'Pennis', 47080410, 'f1BM3gwbd6WssXnmyPdaGIpobYi1', NOW(), 'alumno'),
+('pennis.nazarena@fce.uncu.edu.ar','$2b$12$0vPwH9LcDZvlSx9b3zSTDeYCSdQ/X0Gao8CWBRxCJReNEkvdiT66O', 'Nazarena', 'Pennis', 47080410, 'f1BM3gwbd6WssXnmyPdaGIpobYi1', NOW(), 'alumno'),
 ('profesor@fce.uncu.edu.ar', '$2b$12$o2anKj85TYbuI998pdm.u.LLJntnz6VAHm4ZpR0z7lAisEDWQvy0m', 'Profesor', 'Prueba', 40000000, '5zyU71SDWbcPBbkVbH8Tnr4pSyl2', NOW(), 'profesor')
 
 INSERT INTO alumno (alumno_id)

@@ -17,7 +17,7 @@ from config.db_config import Base, engine
 
 Base.metadata.create_all(engine)
 
-origins = ["http://localhost:5173"]
+origins = ["http://localhost:5173", "http://179.0.136.80"]
 
 app = FastAPI()
 
