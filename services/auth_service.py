@@ -4,17 +4,14 @@ import asyncio
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 from firebase_admin import auth
-from models.alumno import Alumno
 from datetime import datetime, timezone, timedelta
-from jose import jwt
 from repositories.usuario_repository import UsuarioRepository
 from repositories.alumno_repository import AlumnoRepository
 from schemas.login_schema import LoginInput
 
-FIREBASE_API_KEY = os.getenv("FIREBASE_API_KEY")  # Si lo necesitas para otros fines
-JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
-ALGORITHM = "HS256"
+FIREBASE_API_KEY = os.getenv("FIREBASE_API_KEY")
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
+
 
 class AuthService:
     def __init__(self, db: Session):
@@ -22,66 +19,70 @@ class AuthService:
         self.usuario_repo = UsuarioRepository(db)
         self.alumno_repo = AlumnoRepository(db)
 
+    # Método para registrar alumnos, tanto en nuestra base de datos como en Firebase.
     async def registrar_alumnos(self, register_data: dict) -> dict:
 
+        # Comprobamos que el estudiante esté registrado en SIU-Guaraní
         endpoint_verificacion = "http://dashboard.fce.uncu.edu.ar:5000/alutivos/verificaralumnotutor"
-
         dni = register_data.get("dni")
-
         payload = {"documento": dni}
-        
-        async with httpx.AsyncClient() as client:
+
+        async with httpx.AsyncClient() as client: # Hacemos una request a la API de SIU-Guaraní
             response = await client.post(
-                endpoint_verificacion, 
+                endpoint_verificacion,
                 json=payload,
                 headers={"Content-Type": "application/json"}
             )
-        
+
         if response.status_code != 201:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Debes ser alumno/a de la FCE para registrarte"
+                detail="Debes ser alumno/a de la FCE para registrarte" # Si no está registrado, lanzamos un mensaje de error
             )
-        
+
         data = response.json()
         if not data or not isinstance(data, list):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Respuesta de verificación inválida"
+                detail="Respuesta de verificación inválida" # Si hay respuesta pero no tiene los datos esperados o no es una lista, lanzamos un mensaje de error
             )
-        
+
         alumno_info = data[0]
         if alumno_info.get("claustro") != "EST" or alumno_info.get("calidad") != "A":
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="No estás habilitado/a para registrarte en el Tutor"
+                detail="No estás habilitado/a para registrarte en el Tutor" # Si está registrado pero no cumple con las condiciones necesarias, lanzamos un mensaje de error
             )
-        
+
+
+        # Creamos el usuario en Firebase.
         try:
             firebase_user = await asyncio.to_thread(auth.create_user, email=register_data.get("email"), password=register_data.get("password"))
             firebase_uid = firebase_user.uid
         except Exception as e:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"Error al crear usuario en Firebase: {str(e)}"
+                detail=f"Error al crear usuario en Firebase: {str(e)}" # Si hay una excepción lanzamos un mensaje, generalmente el error es causado porque el usuario ya existe
             )
-        
-        try:
 
-            existing_user = self.usuario_repo.get_by_email(alumno_info.get("email"))
+        # Buscamos el usuario en la base de datos
+        try:
+            existing_user = self.usuario_repo.get_by_email(
+                alumno_info.get("email"))
             if existing_user:
                 raise HTTPException(
                     status_code=status.HTTP_409_CONFLICT,
-                    detail="Ya estás registrado en el Tutor. Inicia sesión."
+                    detail="Ya estás registrado en el Tutor. Inicia sesión." # Si existe lanzamos un mensaje de error
                 )
-            
+
+            # Si no existe lo creamos
             alumno = {
-            "nombres": register_data.get("nombres"),
-            "apellido": register_data.get("apellido"),
-            "email": register_data.get("email"),
-            "nro_documento": register_data.get("dni"),
-            "contrasena": register_data.get("password"),
-            "firebase_uid": firebase_uid
+                "nombres": register_data.get("nombres"),
+                "apellido": register_data.get("apellido"),
+                "email": register_data.get("email"),
+                "nro_documento": register_data.get("dni"),
+                "contrasena": register_data.get("password"),
+                "firebase_uid": firebase_uid
             }
 
             self.alumno_repo.create(alumno)
@@ -89,19 +90,20 @@ class AuthService:
         except Exception as e:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"Error al registrar el usuario en la base de datos: {str(e)}"
+                detail=f"Error al registrar el usuario en la base de datos: {str(e)}" # Si hubo un error durante el registro lo notificamos
             )
-        
+
         return {
             "message": "Usuario registrado exitosamente",
             "firebase_uid": firebase_uid,
             "email": alumno.get("email")
         }
-    
-    async def iniciar_sesion(self, login_data: LoginInput) -> dict:
-        
-        firebase_url = f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={FIREBASE_API_KEY}"
 
+    # Método para iniciar sesión
+    async def iniciar_sesion(self, login_data: LoginInput) -> dict:
+
+        # Consultamos a Firebase para autenticar al usuario
+        firebase_url = f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={FIREBASE_API_KEY}"
         payload = {
             "email": login_data.email,
             "password": login_data.password,
@@ -114,26 +116,28 @@ class AuthService:
         if response.status_code != 200:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Tu mail o contraseña son incorrectos"
+                detail="Tu mail o contraseña son incorrectos" # Si las credenciales son incorrectas lanzamos un mensaje de error
             )
-        
+
         firebase_data = response.json()
         firebase_uid = firebase_data.get("localId")
 
+        # Buscamos al usuario en la base de datos
         usuario = self.usuario_repo.get_by_email(email=login_data.email)
 
         if not usuario:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="No estás registrado como usuario. Regístrate para poder iniciar sesión."
+                detail="No estás registrado como usuario. Regístrate para poder iniciar sesión." # Si no lo encontramos, lanzamos un mensaje de error
             )
-        
+
+        # REVISAR LA LÓGICA DE ACÁ EN ADELANTE
         alumno = self.alumno_repo.get_by_id(id=usuario.id)
 
         update_alumno = {
             "last_login": datetime.now(tz=None)
         }
-        
+
         if usuario.type == "alumno":
             self.alumno_repo.update(alumno, update_alumno)
 
@@ -143,14 +147,12 @@ class AuthService:
 
         self.usuario_repo.update(usuario=usuario, update_data=update_data)
 
-        expire = datetime.now(timezone.utc).replace(tzinfo=None) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-        payload_jwt = {"sub": usuario.email, "exp": expire}
-        """ access_token = jwt.encode(payload_jwt, JWT_SECRET_KEY, algorithm=ALGORITHM) """
-        
+        expire = datetime.now(timezone.utc).replace(
+            tzinfo=None) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+
         return {
             "token": firebase_data.get("idToken"),
             "usuario_id": usuario.id,
             "email_usuario": usuario.email,
             "type": usuario.type
         }
-    

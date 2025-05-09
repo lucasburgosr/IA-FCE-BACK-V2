@@ -27,7 +27,6 @@ class ThreadService:
     
     async def get_thread_by_alumno(self, alumno_id: int) -> Thread:
         thread = self.thread_repo.get_by_alumno(alumno_id=alumno_id)
-
         if not thread:
             return self.create_thread(alumno_id=alumno_id)
         
@@ -36,6 +35,7 @@ class ThreadService:
     async def get_all_threads(self) -> List[Thread]:
         return self.thread_repo.get_all()
 
+    # Método que crea un thread en la API de OpenAI y en nuestra DB relacionándolo con un asistente y un estudiante
     def create_thread(self, thread_data: dict) -> Thread:
         alumno_id = thread_data["alumnoId"]
         asistente_id = thread_data["asistente_id"]
@@ -66,6 +66,7 @@ class ThreadService:
         thread = self.thread_repo.get_by_id(id)
         self.thread_repo.delete(thread)
 
+    # Obtenemos la lista de mensajes de OpenAI y los ordenamos por timestamp para mostrarlos en el chat
     async def get_messages(self, id: str) -> List[MensajeOut]:
         response = await asyncio.to_thread(client.beta.threads.messages.list, thread_id=id)
         mensajes = [
@@ -79,6 +80,9 @@ class ThreadService:
         mensajes.sort(key=lambda x: x.fecha)
         return mensajes
 
+    # Método que recibe los ID de thread y asistente y el texto enviado por el usuario para generar una respuesta con un 
+    # modelo de OpenAI
+    # También incrementamos el contador de mensajes enviados por el alumno con increment_message_count()
     async def send_message(self, id: str, texto: str, asistente_id: str, alumno_id: int) -> Dict[str, Any]:
         try:
             mensaje = await asyncio.to_thread(client.beta.threads.messages.create,
@@ -88,7 +92,7 @@ class ThreadService:
             alumno_service = AlumnoService(self.db)
             alumno_service.increment_message_count(alumno_id=alumno_id)
             # Para acceder al mensaje generado por el Asistente hay que traer de nuevo la lista
-            # de mensajes
+            # de mensajes, acá solo devolvemos el estado del objeto run
             run = await asyncio.to_thread(client.beta.threads.runs.create_and_poll,
                                 thread_id=id,
                                 assistant_id=asistente_id)
@@ -97,7 +101,8 @@ class ThreadService:
         except Exception as e:
             return {"error": str(e)}
         
-    async def join_thread_asistente(self, id: str, asistente_id: str):
+    # REVISAR EL USO DE ESTE MÉTODO
+    """ async def join_thread_asistente(self, id: str, asistente_id: str):
         thread = self.get_thread_by_id(id=id)
         asistente_service = AsistenteService(db=self.db)
         asistente = asistente_service.get_asistente_by_id(asistente_id=asistente_id)
@@ -106,4 +111,4 @@ class ThreadService:
             raise ValueError("Thread o Asistente no encontrados")
         
         thread.asistentes.append(asistente)
-        self.db.commit()
+        self.db.commit() """

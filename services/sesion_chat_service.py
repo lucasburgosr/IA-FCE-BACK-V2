@@ -18,6 +18,7 @@ class SesionService:
     def start_session(self, alumno_id: int, thread_id: str) -> SesionChat:
         return self.repo.create(alumno_id, thread_id)
 
+    # Método que finaliza la sesión y almacena los datos en la DB, después llama a resumir_última_conversacion
     def end_session(self, sesion_id: int, thread_id: str, alumno_id: int) -> None:
         service = SesionService(self.repo.db)
         session = self.repo.finish(sesion_id)
@@ -29,6 +30,8 @@ class SesionService:
             raise ValueError(
                 f"Sesión {sesion_id} no encontrada o ya finalizada")
 
+    # Método que toma la lista de mensajes enviados en la sesión finalizada y genera un resumen a partir de ella
+    # usando un modelo de OpenAI
     def resumir_ultima_conversacion(self, alumno_id: int, filtro_fecha: datetime, thread_id: str):
         mensajes = client.beta.threads.messages.list(thread_id=thread_id)
 

@@ -1,4 +1,3 @@
-# schemas/session_schema.py
 from pydantic import BaseModel
 
 class SesionStartRequest(BaseModel):

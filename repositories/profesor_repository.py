@@ -1,6 +1,5 @@
 from sqlalchemy.orm import Session, joinedload
 from models.profesor import Profesor
-from repositories.usuario_repository import UsuarioRepository
 from models.alumno import Alumno
 from models.asistente import Asistente
 from models.materia import Materia

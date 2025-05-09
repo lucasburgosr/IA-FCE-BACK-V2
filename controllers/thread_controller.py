@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from typing import List, Optional, Any, Dict
-from schemas.thread_schema import ThreadOut, ThreadCreate, ThreadUpdate
+from typing import List
+from schemas.thread_schema import ThreadOut
 from services.thread_service import ThreadService
 from schemas.mensaje_schema import MensajeOut
 from config.db_config import get_db

@@ -9,8 +9,6 @@ class Evaluacion(Base):
     evaluacion_id = Column(Integer, primary_key=True, index=True)
     nota = Column(Float, nullable=False)
     evaluacion_fecha = Column(DateTime(timezone=True), default=datetime.now(timezone.utc))
-
-    # Claves foráneas: Subtema y Alumno
     subtema_id = Column(Integer, ForeignKey("subtema.subtema_id"), nullable=False)
     alumno_id = Column(Integer, ForeignKey("alumno.alumno_id"), nullable=False)
 

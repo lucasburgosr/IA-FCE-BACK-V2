@@ -3,7 +3,6 @@ from typing import Dict, Any, List
 from models.alumno import Alumno
 from sqlalchemy.orm import Session
 
-
 class AlumnoService:
     def __init__(self, db: Session):
         self.db = db

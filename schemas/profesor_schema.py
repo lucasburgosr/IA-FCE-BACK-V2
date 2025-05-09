@@ -1,7 +1,7 @@
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
 from typing import Optional
-from schemas.materia_schema import MateriaOut, MateriaBase
+from schemas.materia_schema import MateriaOut
 from pydantic import BaseModel, EmailStr
 from typing import Optional
 

@@ -9,8 +9,6 @@ class Pregunta(Base):
     pregunta_id = Column(Integer, primary_key=True, index=True)
     contenido = Column(Text, nullable=False)
     created_at = Column(DateTime(timezone=True), default=datetime.now(timezone.utc))
-
-    # Claves foráneas: Subtema y Alumno
     subtema_id = Column(Integer, ForeignKey("subtema.subtema_id"), nullable=False)
     alumno_id = Column(Integer, ForeignKey("alumno.alumno_id"), nullable=False)
 

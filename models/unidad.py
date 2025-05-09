@@ -8,11 +8,8 @@ class Unidad(Base):
     unidad_id = Column(Integer, primary_key=True, index=True)
     nombre = Column(String(100), nullable=False)
     descripcion = Column(Text, nullable=True)
-
-    # Clave foránea a Materia (una Materia contiene muchas Unidades)
     materia_id = Column(Integer, ForeignKey("materia.materia_id"), nullable=False)
 
-    # Relación con Subtema: una unidad contiene varios subtemas
     subtemas = relationship("Subtema", backref="unidad", cascade="all, delete-orphan")
 
     def __repr__(self):

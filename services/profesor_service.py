@@ -18,9 +18,9 @@ class ProfesorService:
     def get_all_profesores(self) -> List[Profesor]:
         return self.profesor_repo.get_all()
     
-    def create_profesor(self, profesor_data: Dict[str, Any]) -> Profesor:
-        # Agregar validaciones para comprobar que el profesor no esté registrado.
-        return self.profesor_repo.create(profesor_data)
+    # No vamos a crear profesores desde la app por el momento
+    """ def create_profesor(self, profesor_data: Dict[str, Any]) -> Profesor:
+        return self.profesor_repo.create(profesor_data) """
     
     def update_profesor(self, profesor_id: int, update_data: Dict[str, Any]) -> Profesor:
         profesor = self.profesor_repo.get_by_id(profesor_id)

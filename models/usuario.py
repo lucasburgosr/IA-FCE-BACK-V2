@@ -16,10 +16,7 @@ class Usuario(Base):
 
     type = Column(String(50))
 
-    __mapper_args__ = {
-        "polymorphic_identity": "usuario",
-        "polymorphic_on": type
-    }
+    __mapper_args__ = { "polymorphic_identity": "usuario", "polymorphic_on": type }
 
     def __repr__(self):
         return f"<Alumno(id={self.id}, email='{self.email}', grado='{self.type}')>"

@@ -8,11 +8,8 @@ class Subtema(Base):
     subtema_id = Column(Integer, primary_key=True, index=True)
     nombre = Column(String(100), nullable=False)
     descripcion = Column(Text, nullable=True)
-
-    # Clave foránea a Unidad
     unidad_id = Column(Integer, ForeignKey("unidad.unidad_id"), nullable=False)
 
-    # Relación con Pregunta y Evaluacion (opcionales si deseas backref)
     preguntas = relationship("Pregunta", backref="subtema", cascade="all, delete-orphan")
     evaluaciones = relationship("Evaluacion", backref="subtema", cascade="all, delete-orphan")
 

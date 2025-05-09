@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends
 from config.db_config import get_db
 from sqlalchemy.orm import Session
-from pydantic import EmailStr, BaseModel
 from services.auth_service import AuthService
 from schemas.login_schema import LoginInput, LoginResponse
 

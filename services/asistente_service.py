@@ -36,6 +36,7 @@ class AsistenteService:
     
     # Este método se encarga de actualizar tanto el objeto Asistente de la DB como el de la API.
     def update_asistente(self, asistente_id: str, update_data: Dict[str, Any]) -> dict:
+        
         # 1. Actualizar en OpenAI
         asistente_api = client.beta.assistants.update(
             assistant_id=asistente_id,
@@ -62,9 +63,3 @@ class AsistenteService:
             "name": asistente_api.name,
             "instructions": asistente_api.instructions,
         }
-    
-    """ Por ahora no vamos a eliminar asistentes desde la app
-
-     def delete_asistente(self, asistente_id: str) -> None:
-        asistente = self.asistente_repo.get_by_id(asistente_id)
-        self.asistente_repo.delete(asistente) """

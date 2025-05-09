@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
-from schemas.asistente_schema import AsistenteDBOut, AsistenteCreate, AsistenteUpdate, AsistenteOpenAIOut
+from schemas.asistente_schema import AsistenteDBOut, AsistenteUpdate, AsistenteOpenAIOut
 from services.asistente_service import AsistenteService
 from config.db_config import get_db
 from utils.dependencies import get_current_user
@@ -50,12 +50,3 @@ def update_asistente(asistente_id: str, asistente_data: AsistenteUpdate, db: Ses
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     return AsistenteOpenAIOut.model_validate(asistente_actualizado)
-
-@router.delete("/{asistente_id}", status_code=204)
-def delete_asistente(asistente_id: str, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
-    service = AsistenteService(db)
-    try:
-        service.delete_asistente(asistente_id)
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
-    return

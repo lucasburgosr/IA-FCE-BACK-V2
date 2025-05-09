@@ -1,7 +1,4 @@
-# schemas/thread_schema.py
-
 from pydantic import BaseModel, Field
-from datetime import datetime
 from typing import Optional
 
 # Schema base: define los campos esenciales para un Thread

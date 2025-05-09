@@ -29,16 +29,6 @@ def read_alumno(id: int, db: Session = Depends(get_db),
         raise HTTPException(status_code=404, detail=str(e))
     return alumno
 
-@router.get("by-email", response_model=AlumnoOut)
-def read_alumno_by_email(email: str, db: Session = Depends(get_db)):
-
-    service = AlumnoService(db)
-    try:
-        alumno = service.get_alumno_by_email(email)
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
-    return alumno
-
 @router.post("/", response_model=AlumnoOut, status_code=201)
 def create_alumno(alumno: AlumnoCreate, db: Session = Depends(get_db),
     current_user: dict = Depends(get_current_user)):

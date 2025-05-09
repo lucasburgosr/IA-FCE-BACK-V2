@@ -1,7 +1,8 @@
-from fastapi import Header, HTTPException, status, Depends
+from fastapi import Header, HTTPException, status
 from firebase_admin import auth
 from typing import Optional
 
+# Método que valida si el usaurio está autenticado para hacer requests a los distintos endpoints
 async def get_current_user(authorization: Optional[str] = Header(None)):
     if not authorization:
         raise HTTPException(

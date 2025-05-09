@@ -1,6 +1,7 @@
 from sqlalchemy import Table, Column, Integer, ForeignKey, String
 from config.db_config import Base
 
+# Tabla intermedia entre Alumno y Asistente
 alumno_asistente = Table(
     'alumno_asistente',
     Base.metadata,
