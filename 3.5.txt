@@ -1,0 +1,1 @@
+Matrices elementales: matrices obtenidas de la identidad mediante operaciones elementales sobre filas.

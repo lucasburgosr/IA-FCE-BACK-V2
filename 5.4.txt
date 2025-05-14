@@ -1,0 +1,1 @@
+Propiedades de los subespacios: intersección, suma y dimensión de subespacios de Rⁿ.

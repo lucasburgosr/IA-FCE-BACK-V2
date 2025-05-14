@@ -1,0 +1,1 @@
+Vectores en el espacio bidimensional, tridimensional y n-dimensional: representación de magnitudes con dirección y sentido en R², R³ y Rⁿ.

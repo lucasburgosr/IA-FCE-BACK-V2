@@ -1,0 +1,1 @@
+Operaciones lógicas: conectivos como negación, conjunción, disyunción e implicación y sus tablas de verdad.

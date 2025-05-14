@@ -1,0 +1,1 @@
+Métodos de resolución de SEL (matricial): uso de la inversa o factorizaciones para obtener la solución.

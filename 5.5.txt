@@ -1,0 +1,1 @@
+Base: conjunto de vectores linealmente independientes que generan todo el espacio o subespacio considerado.

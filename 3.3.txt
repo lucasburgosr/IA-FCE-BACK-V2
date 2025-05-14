@@ -1,0 +1,1 @@
+Rango: máximo número de filas o columnas linealmente independientes de una matriz.

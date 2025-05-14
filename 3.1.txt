@@ -1,0 +1,1 @@
+Clasificación de matrices: tipos como diagonal, triangular, simétrica y de identidad y sus usos.

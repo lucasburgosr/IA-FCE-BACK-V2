@@ -1,0 +1,1 @@
+Rectas y planos en el espacio tridimensional: ecuaciones paramétricas, vectoriales y normales que describen líneas y superficies planas.

@@ -1,0 +1,1 @@
+Clasificación de los SEL: sistemas compatibles determinados, compatibles indeterminados e incompatibles.

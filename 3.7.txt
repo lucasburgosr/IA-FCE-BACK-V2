@@ -1,0 +1,1 @@
+Determinantes y propiedades: función escalar que caracteriza invertibilidad y volumen orientado.

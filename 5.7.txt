@@ -1,0 +1,1 @@
+Aplicación a matrices y sistemas de ecuaciones lineales: interpretación de rango, nulidad y soluciones mediante subespacios.

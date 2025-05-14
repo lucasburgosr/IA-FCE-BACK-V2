@@ -1,0 +1,1 @@
+Relaciones lógicas: vínculos de equivalencia o implicación entre proposiciones y su representación en tablas de verdad.

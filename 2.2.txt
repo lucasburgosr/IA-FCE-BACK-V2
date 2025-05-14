@@ -1,0 +1,1 @@
+Operaciones con vectores: suma, resta y multiplicación por escalar, junto con sus propiedades algebraicas.

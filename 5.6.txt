@@ -1,0 +1,1 @@
+Dimensión: número de vectores en una base de un subespacio y su relación con la independencia lineal.

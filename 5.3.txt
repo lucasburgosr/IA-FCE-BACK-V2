@@ -1,0 +1,1 @@
+Dependencia e independencia lineal: relación entre vectores según se puedan expresar unos en términos de otros.

@@ -1,0 +1,1 @@
+Espacio generado y conjunto generador: subespacio constituido por todas las combinaciones lineales de un conjunto de vectores.

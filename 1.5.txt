@@ -1,0 +1,1 @@
+Predicados: expresiones con variables que se convierten en proposiciones al especificar valores del dominio.

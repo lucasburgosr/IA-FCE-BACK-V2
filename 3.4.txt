@@ -1,0 +1,1 @@
+Matriz inversa y propiedades: condición de existencia (determinante no nulo) y su uso para resolver ecuaciones.

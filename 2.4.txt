@@ -1,0 +1,1 @@
+Longitud y ángulo entre vectores: norma euclídea y coseno del ángulo derivado del producto punto.

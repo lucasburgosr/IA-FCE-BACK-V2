@@ -1,0 +1,1 @@
+Leyes lógicas: identidades (De Morgan, doble negación, absorción, etc.) que permiten transformar proposiciones manteniendo su valor de verdad.

@@ -1,0 +1,1 @@
+Cuantificadores: símbolos ∀ (universal) y ∃ (existencial) que permiten formar proposiciones sobre conjuntos.

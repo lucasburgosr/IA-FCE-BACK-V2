@@ -1,0 +1,1 @@
+Nociones básicas de la teoría de conjuntos: pertenencia, inclusión, unión, intersección y conjunto complementario.

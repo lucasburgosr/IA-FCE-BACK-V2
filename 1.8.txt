@@ -1,0 +1,1 @@
+Métodos de demostración: técnicas como inducción, contradicción y contrapositiva para probar teoremas.

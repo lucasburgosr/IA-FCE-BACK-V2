@@ -1,0 +1,1 @@
+Método de Gauss–Jordan: reducción a forma escalonada reducida para obtener directamente la solución única o la base del espacio solución.

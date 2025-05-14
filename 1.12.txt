@@ -1,0 +1,1 @@
+Relación y función: nociones básicas de correspondencias entre conjuntos que asignan cada elemento del dominio a uno del codominio.

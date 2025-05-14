@@ -1,0 +1,1 @@
+Producto punto: operación que devuelve un escalar y permite medir ángulos y proyecciones entre vectores.

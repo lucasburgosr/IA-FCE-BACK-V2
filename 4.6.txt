@@ -1,0 +1,1 @@
+Propiedades de los SEL: existencia, unicidad y dependencia de las soluciones según rango y determinante.

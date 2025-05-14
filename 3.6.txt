@@ -1,0 +1,1 @@
+Cálculo de la inversa: métodos como adjunta/determinante y eliminación de Gauss‑Jordan.
