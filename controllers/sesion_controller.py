@@ -15,7 +15,6 @@ router = APIRouter(prefix="/sesiones", tags=["Sesiones"])
 
 @router.post("/iniciar/{alumno_id}", response_model=SesionStartResponse, status_code=status.HTTP_201_CREATED)
 async def start_session(alumno_id: int, req: SesionStartRequest, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
-    print(alumno_id)
     service = SesionService(db)
     session = service.start_session(alumno_id, req.thread_id)
     return SesionStartResponse(sesion_id=session.sesion_id)

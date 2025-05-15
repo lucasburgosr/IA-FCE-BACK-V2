@@ -7,7 +7,6 @@ class Unidad(Base):
 
     unidad_id = Column(Integer, primary_key=True, index=True)
     nombre = Column(String(100), nullable=False)
-    descripcion = Column(Text, nullable=True)
     materia_id = Column(Integer, ForeignKey("materia.materia_id"), nullable=False)
 
     subtemas = relationship("Subtema", backref="unidad", cascade="all, delete-orphan")

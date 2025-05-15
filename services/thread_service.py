@@ -8,17 +8,11 @@ from datetime import datetime
 from schemas.mensaje_schema import MensajeOut
 from repositories.asistente_repository import AsistenteRepository
 from services.asistente_service import AsistenteService
+from services.pregunta_service import PreguntaService
 from services.vector_store_service import VectorService
 from services.alumno_service import AlumnoService
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
 
 client = OpenAI()
-
-VECTOR_STORE_ID = os.getenv("VECTOR_STORE_ID")
-
 
 class ThreadService:
     def __init__(self, db: Session):
@@ -74,7 +68,7 @@ class ThreadService:
         self.thread_repo.delete(thread)
 
     # Obtenemos la lista de mensajes de OpenAI y los ordenamos por timestamp para mostrarlos en el chat
-    async def get_messages(self, id: str) -> List[MensajeOut]:
+    async def get_mensajes(self, id: str) -> List[MensajeOut]:
         response = await asyncio.to_thread(client.beta.threads.messages.list, thread_id=id)
         mensajes = [
             MensajeOut(
@@ -88,7 +82,7 @@ class ThreadService:
         return mensajes
 
     # Enviamos la pregunta y generamos una respuesta con el modelo de OpenAI.
-    async def send_message(self, id: str, texto: str, asistente_id: str, alumno_id: int) -> Dict[str, Any]:
+    async def enviar_mensaje(self, id: str, texto: str, asistente_id: str, alumno_id: int) -> Dict[str, Any]:
         try:
             mensaje = await asyncio.to_thread(client.beta.threads.messages.create,
                                               thread_id=id,
@@ -96,9 +90,22 @@ class ThreadService:
                                               role="user")
 
             alumno_service = AlumnoService(self.db)
+            vector_service = VectorService()
+            pregunta_service = PreguntaService(self.db)
 
-            alumno_service.increment_message_count(alumno_id=alumno_id)
 
+            alumno_service.incrementar_contador_mensajes(alumno_id=alumno_id)
+            subtema_id, unidad_id = await vector_service.clasificar_consulta(texto=texto)
+
+            pregunta_data = {
+                "contenido": texto,
+                "subtema_id": subtema_id,
+                "unidad_id": unidad_id,
+                "alumno_id": alumno_id,
+            }
+
+            pregunta = pregunta_service.create_pregunta(pregunta_data=pregunta_data)
+            
             run = await asyncio.to_thread(client.beta.threads.runs.create_and_poll,
                                           thread_id=id,
                                           assistant_id=asistente_id)

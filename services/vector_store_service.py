@@ -10,7 +10,6 @@ client = OpenAI()
 VECTOR_STORE_ID = os.getenv("VECTOR_STORE_ID")
 
 class VectorService:
-    # Clasificamos la consulta del estudiante
     async def clasificar_consulta(self, texto: str):
 
         vs = client.vector_stores.retrieve(

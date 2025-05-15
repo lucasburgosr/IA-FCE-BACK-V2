@@ -36,7 +36,7 @@ class AlumnoService:
         alumno = self.alumno_repo.get_by_id(id)
         self.alumno_repo.delete(alumno)
 
-    def increment_message_count(self, alumno_id: int, n: int = 1):
+    def incrementar_contador_mensajes(self, alumno_id: int, n: int = 1):
         alumno = self.alumno_repo.get_by_id(alumno_id)
         alumno.mensajes_enviados += n
         self.db.commit()

@@ -7,7 +7,6 @@ class Subtema(Base):
 
     subtema_id = Column(Integer, primary_key=True, index=True)
     nombre = Column(String(100), nullable=False)
-    descripcion = Column(Text, nullable=True)
     unidad_id = Column(Integer, ForeignKey("unidad.unidad_id"), nullable=False)
 
     preguntas = relationship("Pregunta", backref="subtema", cascade="all, delete-orphan")

@@ -75,14 +75,14 @@ async def delete_thread(id: str, db: Session = Depends(get_db),
 async def read_thread_messages(id: str, db: Session = Depends(get_db)):
     service = ThreadService(db)
     try:
-        mensajes = await service.get_messages(id=id)
+        mensajes = await service.get_mensajes(id=id)
     except Exception as e:
         raise HTTPException(status_code=404, detail=str(e))
     return mensajes
 
 
 @router.post("/{id}")
-async def send_message(mensaje_data: dict, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+async def enviar_mensaje(mensaje_data: dict, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     try:
 
         texto = mensaje_data["input"]
@@ -91,10 +91,10 @@ async def send_message(mensaje_data: dict, db: Session = Depends(get_db), curren
         alumno_id = mensaje_data["alumno_id"]
 
         service = ThreadService(db)
-        response = await service.send_message(id=id, texto=texto, asistente_id=asistente_id, alumno_id=alumno_id)
+        response = await service.enviar_mensaje(id=id, texto=texto, asistente_id=asistente_id, alumno_id=alumno_id)
 
         if response == "completed":
-            mensajes = await service.get_messages(id=id)
+            mensajes = await service.get_mensajes(id=id)
             return mensajes
 
     except Exception as e:
