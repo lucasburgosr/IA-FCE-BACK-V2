@@ -10,6 +10,7 @@ class Unidad(Base):
     materia_id = Column(Integer, ForeignKey("materia.materia_id"), nullable=False)
 
     subtemas = relationship("Subtema", backref="unidad", cascade="all, delete-orphan")
+    preguntas = relationship("Pregunta", backref="unidad")
 
     def __repr__(self):
         return f"<Unidad(unidad_id={self.unidad_id}, nombre='{self.nombre}')>"

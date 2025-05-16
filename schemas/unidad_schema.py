@@ -6,7 +6,6 @@ from schemas.subtema_schema import SubtemaOut
 # Schema base: define los campos comunes de una unidad
 class UnidadBase(BaseModel):
     nombre: str
-    descripcion: Optional[str] = None
     materia_id: int
 
 # Schema para la creación de una Unidad (input)
